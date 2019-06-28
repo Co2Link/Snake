@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.LinkedList;
 
 enum Settings {
-    DEFAULT_NODE_SIZE(50),WINDOWS_HEIGHT(1000),WINDOWS_WIDTH(1000),DEFAULT_MOVE_INTERVAL(1000);
+    DEFAULT_NODE_SIZE(100),WINDOWS_HEIGHT(1000),WINDOWS_WIDTH(1000),DEFAULT_MOVE_INTERVAL(500);
 
     int value;
     Settings(int value) {
@@ -23,7 +23,7 @@ class GameView {
     public void init() {
         canvas = new JPanel() {
             @Override
-            public void paintComponents(Graphics g) {
+            public void paint(Graphics g) {
                 drawGridBackground(g);
                 drawFood(g,grid.getFood());
                 drawSnake(g,grid.getSnake());
@@ -45,7 +45,7 @@ class GameView {
         drawCircle(graphics,food,Color.blue);
     }
     public void drawGridBackground(Graphics graphics) {
-        graphics.setColor(Color.black);
+        graphics.setColor(Color.white);
         graphics.fillRect(0,0,Settings.WINDOWS_HEIGHT.value,Settings.WINDOWS_WIDTH.value);
     }
     private void drawSquare(Graphics graphics,Node area,Color color) {
@@ -63,8 +63,9 @@ class GameView {
     }
 }
 
-public class SnakeApp {
-    public void init() {
+public class SnakeApp implements Runnable {
+    @Override
+    public void run() {
         // 初始化
         Grid grid = new Grid();
 
@@ -87,21 +88,13 @@ public class SnakeApp {
         window.setVisible(true);
 
         // 注册按键
-        GameController gameController = new GameController(grid,gameView);
+        GameController gameController = new GameController(grid,gameView,window);
         window.addKeyListener(gameController);
+
+        new Thread(gameController).start();
+
     }
     public static void main(String[] args) {
-        JFrame window = new JFrame("我的贪吃蛇");
-        window.setPreferredSize(new Dimension(1000,1000));
-        // 往窗口添加组件
-        JLabel label = new JLabel("我草泥马");
-        window.getContentPane().add(label);
-
-        window.setResizable(false);
-        // 表示关闭窗口时直接关闭应用程序
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // 渲染和显示窗口
-        window.pack();
-        window.setVisible(true);
+        SwingUtilities.invokeLater(new SnakeApp());
     }
 }

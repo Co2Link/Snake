@@ -2,7 +2,7 @@ import java.util.Dictionary;
 import java.util.LinkedList;
 
 enum DIRECTION {
-    UP(3),RIGHT(1),DOWN(2),LEFT(0);
+    UP(1),RIGHT(0),DOWN(1),LEFT(0);
     private final int directionCode;
     DIRECTION(int directionCode) {
         this.directionCode=directionCode;
@@ -30,6 +30,15 @@ class Node
     public boolean is_same_pos (Node a) {
         return x==a.getX()&&y==a.getY();
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s@ (%d ,%d)",getClass().getName(),x,y);
+    }
+
+    public boolean equals(Node node) {
+        return x==node.getX()&&y==node.getY();
+    }
 }
 
 public class Snake
@@ -45,10 +54,14 @@ public class Snake
      public Node move(DIRECTION direction) {
         Node head = getHead();
         switch (direction) {
-            case UP:body.addFirst(new Node(head.getX()-1,head.getY()));break;
-            case RIGHT:body.addFirst(new Node(head.getX(),head.getY()+1));break;
-            case DOWN:body.addFirst(new Node(head.getX()+1,head.getY()));break;
-            case LEFT:body.addFirst(new Node(head.getX(),head.getY()-1));break;
+            case UP:body.addFirst(new Node(head.getX(),head.getY()-1));
+                break;
+            case RIGHT:body.addFirst(new Node(head.getX()+1,head.getY()));
+                break;
+            case DOWN:body.addFirst(new Node(head.getX(),head.getY()+1));
+                break;
+            case LEFT:body.addFirst(new Node(head.getX()-1,head.getY()));
+                break;
         }
         return body.removeLast();
      }
@@ -65,4 +78,10 @@ public class Snake
      public LinkedList<Node> getBody() {
         return body;
      }
+
+    public static void main(String[] args) {
+        Node mynode = new Node(10,11);
+        System.out.println(mynode);
+    }
 }
+

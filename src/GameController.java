@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -5,12 +6,14 @@ import java.awt.event.KeyListener;
 public class GameController implements KeyListener,Runnable {
     private final Grid grid;
     private final GameView gameView;
+    private final JFrame window;
 
     private boolean running;
 
-    public GameController (Grid grid,GameView gameView) {
+    public GameController (Grid grid,GameView gameView,JFrame window) {
         this.grid = grid;
         this.gameView = gameView;
+        this.window = window;
         this.running = true;
     }
 
@@ -22,7 +25,22 @@ public class GameController implements KeyListener,Runnable {
             }catch (InterruptedException e) {
                 break;
             }
+                // 刷新游戏状态
+                grid.setL_snakeDirection();
+                running = !grid.nextRound();
+                grid.print_grid();
+                // 刷新画面
+                gameView.draw();
 
+                // 游戏结束
+                if (!running) {
+                    int option = JOptionPane.showConfirmDialog(window,"游戏结束，要继续吗？","游戏结束",JOptionPane.YES_NO_OPTION);
+                    if(option == 0) {
+                        // 继续游戏，初始化游戏
+                        grid.init();
+                        running = true;
+                    }
+                }
         }
     }
 
